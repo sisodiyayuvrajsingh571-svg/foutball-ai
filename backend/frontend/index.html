@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Football Shorts AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: Arial; text-align:center; padding:20px; background:#0f0f0f; color:white;">
+
+<h1>⚽ Football Shorts AI</h1>
+<p>Upload a match → get viral Shorts instantly</p>
+
+<br>
+
+<input type="file" id="file" style="margin:10px;">
+
+<br><br>
+
+<label>Select Style:</label>
+<br>
+
+<select id="style" style="padding:10px; margin:10px;">
+  <option value="hype">🔥 Hype</option>
+  <option value="cinematic">🎬 Cinematic</option>
+  <option value="meme">😂 Meme</option>
+  <option value="tiktok">📱 TikTok</option>
+</select>
+
+<br><br>
+
+<button onclick="generate()" 
+style="padding:12px 20px; background:red; color:white; border:none; border-radius:8px;">
+🚀 Generate Shorts
+</button>
+
+<hr style="margin:30px 0;">
+
+<div id="output"></div>
+
+<script>
+async function generate() {
+  const file = document.getElementById("file").files[0];
+  const style = document.getElementById("style").value;
+
+  if (!file) {
+    alert("Please upload a video first");
+    return;
+  }
+
+  document.getElementById("output").innerHTML = "⏳ Processing video...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("style", style);
+
+  // ⚠️ REPLACE THIS AFTER DEPLOYING BACKEND
+  const backendURL = "https://YOUR-BACKEND.onrender.com/generate";
+
+  try {
+    const res = await fetch(backendURL, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    let html = "<h2>🎬 Your Shorts</h2>";
+
+    data.clips.forEach((clip) => {
+      html += `
+        <div style="margin:20px;">
+          <video width="300" controls>
+            <source src="${clip.clip}">
+          </video>
+          <p>Style: ${clip.style}</p>
+        </div>
+      `;
+    });
+
+    document.getElementById("output").innerHTML = html;
+
+  } catch (err) {
+    document.getElementById("output").innerHTML =
+      "❌ Error connecting to backend";
+  }
+}
+</script>
+
+</body>
+</html>
